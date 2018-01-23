@@ -26,7 +26,8 @@ int main(){
 	Sol_flag[0]=0;Sol_flag[1]=0;Sol_flag[2]=0;//移動側の読み込み回数、単独測位回数、RTKのFIX回数
 
 	set_initial_value();//初期設定＋ファイル設定
-	cout << "GPSTIME" << " " << "Ref" << " " << "Rov" << " " << "全回数" << " " << "測位回数" << " " << "FIX回数" << endl;
+//	cout << "GPSTIME" << " " << "Ref" << " " << "Rov" << " " << "全回数" << " " << "測位回数" << " " << "FIX回数" << endl;
+	printf("  GPSTIME    RefSAT RovSAT      ALLcount     POSTcount     FIXcount\n");
 
 	for(iter=1;iter<=Iteration;iter++){//設定回数分読み込む
 
@@ -107,10 +108,13 @@ int main(){
 
 		}//DGNSS＋RTK
 
-		if(((int)iter%500)==0 && GPSTIME>=-0.1 && DGPSTIME>=-0.1)//途中経過の書き出し
-			cout << GPSTIME << " " << SATn[1] << " " << SATn[0] << " " << Sol_flag[0] << " " << Sol_flag[1] << " " << Sol_flag[2] << endl;
+		if (((int)iter % 100) == 0 && GPSTIME >= -0.1 && DGPSTIME >= -0.1)//途中経過の書き出し
+	//		cout << GPSTIME << " " << SATn[1] << " " << SATn[0] << " " << Sol_flag[0] << " " << Sol_flag[1] << " " << Sol_flag[2] << endl;
+			printf("\r%10.4f     %3d    %3d    %10d    %10d   %10d", GPSTIME, SATn[1], SATn[0], Sol_flag[0], Sol_flag[1], Sol_flag[2]);
+
 		
 	}//ここまでが繰り返し計算部
+
 
 	file_close(RTK);//ファイルを閉じる
 	return(0);
