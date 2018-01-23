@@ -1,5 +1,7 @@
 ///////////////////////////////////////////////////////////////////
-//  
+//
+// 最低仰角や最低信号レベル等で衛星選択
+//
 ///////////////////////////////////////////////////////////////////
 
 #include <iostream>
@@ -9,23 +11,17 @@
 void choose_sat(int rcvn, int iter)
 {
 	int i,j,k,stock_sat[PRN],sat=0,prn,stock[PRN]={0};
-////////  selection of satellite  ////////////
-	//reject code from receiver
-	//minimum elevation angle
-	//minimum carrier to noise ratio
-	//SVn_sat[rcvn][prn]
-//////////////////////////////////////////////
 
 	if(rcvn == 1){
 		for(i=0;i<SATn[rcvn];i++){
 			prn = SVn[rcvn][i];
-			if(Elevation[rcvn][prn] <= Elevation_mask1 ||
-				Cn1[rcvn][prn] <= Threshold_cn ||
-				fabs(Pr1[rcvn][prn]) <= 1.0 ||//
-				fabs(Cp1[rcvn][prn]) <= 1.0 ||//
-				LLI[rcvn][prn] >= 1 ||
-				SVn_sat[rcvn][prn] == 0 ||//
-				Ephe.health[prn] > 0.9)//
+			if(Elevation[rcvn][prn] <= Elevation_mask1 ||//マスク角
+				Cn1[rcvn][prn] <= Threshold_cn ||//最低信号強度(dBHz)
+				fabs(Pr1[rcvn][prn]) <= 1.0 ||//擬似距離の有無
+				fabs(Cp1[rcvn][prn]) <= 1.0 ||//搬送波位相の有無
+				LLI[rcvn][prn] >= 1 ||//Loss of lock indicator(スリップやハーフサイクルチェック)
+				SVpos_flag[rcvn][prn] == 0 ||//エフェメリスの有無
+				Ephe.health[prn] > 0.9)//エフェメリスの健康フラグ
 				i=i;
 			else{
 				stock_sat[sat] = SVn[rcvn][i];
@@ -54,22 +50,17 @@ void choose_sat(int rcvn, int iter)
 	if(rcvn == 0){
 		for(i=0;i<SATn[rcvn];i++){
 			prn = SVn[rcvn][i];
-			if (
-				Elevation[rcvn][prn] <= Elevation_mask1 ||
-				Cn1[rcvn][prn] <= Threshold_cn ||
-				SVn_sat[rcvn][prn] == 0 ||
 
-				fabs(Pr1[rcvn][prn]) <= 1.0 ||//擬似距離のチェック]
-				fabs(Dp1[rcvn][prn]) <= 1.0 ||//搬送波のチェック
-				fabs(Cp1[rcvn][prn]) <= 1.0 ||//搬送波のチェック
-				LLI[rcvn][prn] >= 1 ||
-				prn > 1000)//どうでもいいやつ
-				i = i;
+			if(
+				Elevation[rcvn][prn] <= Elevation_mask1 ||//マスク角
+				Cn1[rcvn][prn] <= Threshold_cn ||//最低信号強度(dBHz)
+				fabs(Pr1[rcvn][prn]) <= 1.0 ||//擬似距離の有無
+				fabs(Cp1[rcvn][prn]) <= 1.0 ||//搬送波の有無
+				LLI[rcvn][prn] >= 1)//Loss of lock indicator
+				i=i;
 			else{
 				stock_sat[sat] = SVn[rcvn][i];
 				sat++;
-				fprintf(fp[7], ",%d", prn);
-
 				
 				//if(prn>=101 && prn<=130)
 				//	Glo_Num++;

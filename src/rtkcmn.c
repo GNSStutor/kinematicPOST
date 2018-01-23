@@ -9,6 +9,7 @@
 * version : $Revision: 1.2 $ $Date: 2007/01/23 16:28:05 $
 * history : 2007/01/12 1.0 new
 *-----------------------------------------------------------------------------*/
+#pragma warning(disable:4996)
 #include "rtklib.h"
 #ifdef MKL
 #include <mkl_types.h>

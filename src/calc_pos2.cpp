@@ -124,8 +124,8 @@ void calc_pos2(int rcvn, int iter_main, int pos)
 
 	//移動側の単独測位結果ファイル出力
 	if(rcvn==0 && POS==1){
-		x = (t[0]-POSrcvlat[1])*111319.49;
-		y = (t[1]-POSrcvlon[1])*cos(t[0]*PI/180.0)*111319.49;
+		x = (t[0]-POSrcvlat[1])*110947.0;
+		y = (t[1]-POSrcvlon[1])*cos(t[0]*PI/180.0)*111319.0;
 ///*
 		fprintf(fp[3],"%f,%d,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f,%f,%f,%f",
 		GPSTIME,SATn[rcvn],y,x,t[2]-POSrcvhgt[1],t[0],t[1],t[2],HDOP,VDOP,MinSvNum,

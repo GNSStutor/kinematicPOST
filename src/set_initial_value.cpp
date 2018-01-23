@@ -1,7 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
+// 初期設定
 //
 ////////////////////////////////////////////////////////////////////////////////
+#pragma warning(disable:4996)
 #include <math.h>
 #include <iostream>
 
@@ -73,6 +75,10 @@ void set_initial_value()
 		cos(POSrcvlat[rcvn]*pi/180)*sin(POSrcvlon[rcvn]*pi/180);
 	Ref_pos[2][rcvn] = (n*b*b/a/a+POSrcvhgt[rcvn]+POSrcvund[rcvn])*
 		sin(POSrcvlat[rcvn]*pi/180);
+
+	POSrcvlat[0]=35.66693868;
+	POSrcvlon[0]=139.79218;
+	POSrcvhgt[0]=39.86;
 
 	rcvn=0;//rover
 	pi = 3.14159265359;	
@@ -153,13 +159,9 @@ void set_initial_value()
 	if((fp[5] = fopen("rtk.csv","w")) == NULL){
 		cout << "出力ファイルを開けない5"<< endl;exit(1);
 	}
-	//利用衛星情報
-	if((fp[6] = fopen("sv.csv","w")) == NULL){
-		cout << "出力ファイルを開けない6" << endl;exit(1);
-	}
 	//テスト用
-	if((fp[7] = fopen("test.csv","w")) == NULL){
-		cout << "出力ファイルを開けない7" << endl;exit(1);
+	if((fp[6] = fopen("test.csv","w")) == NULL){
+		cout << "出力ファイルを開けない6" << endl;exit(1);
 	}
 
 ////////////////////// 出力する結果のためのファイル設定   /////////////////////////

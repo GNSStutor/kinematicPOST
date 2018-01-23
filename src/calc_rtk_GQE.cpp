@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 //
-//
+// GPS/QZS/GALILEOÇ≈ÇÃRTK
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -43,8 +43,8 @@ void calc_rtk_GQE(int rcvn)
 	double dx,dy,dz;
 	double y[PRN]={0};
 	double eps;
-	double g[PRN*PRN]={0},sg[PRN*PRN]={0},gtw[PRN*PRN]={0},g2[PRN*PRN]={0},g3[PRN*PRN]={0};
-	double gt[PRN*PRN]={0},w[PRN*PRN]={0},gtwg[PRN*PRN]={0},inv_gtwg[PRN*PRN]={0},gtwg_gtw[PRN*PRN]={0};
+	static double g[PRN*PRN]={0},sg[PRN*PRN]={0},gtw[PRN*PRN]={0},g2[PRN*PRN]={0},g3[PRN*PRN]={0};
+	static double gt[PRN*PRN]={0},w[PRN*PRN]={0},gtwg[PRN*PRN]={0},inv_gtwg[PRN*PRN]={0},gtwg_gtw[PRN*PRN]={0};
 	double q[PRN*PRN]={0};
 	double ref_diff[PRN]={0},rov_diff[PRN]={0};
 	double max_ele=0;
@@ -557,12 +557,12 @@ void calc_rtk_GQE(int rcvn)
 	t[0] = t[0]*180/pi;
 	t[1] = t[1]*180/pi;
 
-	lat_diff = (t[0]-POSrcvlat[1])*111319.49;
-	lon_diff = (t[1]-POSrcvlon[1])*cos(t[0]*pi/180.0)*111319.49;
+	lat_diff = (t[0]-POSrcvlat[1])*110947.0;
+	lon_diff = (t[1]-POSrcvlon[1])*cos(t[0]*pi/180.0)*111319.0;
 	hgt_diff = t[2] - POSrcvhgt[1];
 
-	fprintf(fp[4],"%f,%f,%f,%15.10f,%15.10f,%f,%d\n",
-		DGPSTIME,lon_diff,lat_diff,t[0],t[1],t[2],SATn[rcvn]);
+	fprintf(fp[4],"%f,%f,%f,%f,%15.10f,%15.10f,%f,%d\n",
+		DGPSTIME,lon_diff,lat_diff,hgt_diff,t[0],t[1],t[2],SATn[rcvn]);
 	
 /////////////////////////////////////////////////////////////////////////////
 
@@ -590,8 +590,8 @@ void calc_rtk_GQE(int rcvn)
 	t[0] = t[0]*180/pi;
 	t[1] = t[1]*180/pi;
 
-	lat_diff = (t[0]-POSrcvlat[1])*111319.49;
-	lon_diff = (t[1]-POSrcvlon[1])*cos(t[0]*pi/180.0)*111319.49;
+	lat_diff = (t[0]-POSrcvlat[1])*110947.0;
+	lon_diff = (t[1]-POSrcvlon[1])*cos(t[0]*pi/180.0)*111319.0;
 	hgt_diff = t[2] - POSrcvhgt[1];
 
 	s_factor = s[1]/s[0];
@@ -604,8 +604,8 @@ void calc_rtk_GQE(int rcvn)
 
 	if(s_factor>=threshold_ratio){
 		Sol_flag[2]++;//FIXâÒêîÉJÉEÉìÉg
-		fprintf(fp[5],"%f,%f,%f,%15.10f,%15.10f,%f,%f,%d\n",
-			DGPSTIME,lon_diff,lat_diff,t[0],t[1],t[2],Ratio,SATn[rcvn]);
+		fprintf(fp[5],"%f,%f,%f,%f,%15.10f,%15.10f,%f,%f,%d\n",
+			DGPSTIME,lon_diff,lat_diff,hgt_diff,t[0],t[1],t[2],Ratio,SATn[rcvn]);
 	
 //		for(i=0;i<SATn[rcvn];i++){
 //			fprintf(fp[5],",%d",SVn[rcvn][i]);

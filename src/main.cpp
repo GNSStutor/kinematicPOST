@@ -3,8 +3,6 @@
 // UBLOX(M8P,M8T)の受信機観測データを利用したRTKの演算
 // GPS/QZSS L1, GALILEO E1, BeiDou B1, GLONASS G1
 //
-//		ver.1.1
-//
 /////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
@@ -41,9 +39,6 @@ int main(){
 		calc_direction(rcvn,iter);//仰角・方位角計算（基準側なのでユーザ位置は固定の基準位置で計算）
 		calc_iono_model(rcvn);//電離層モデルでの電離層遅延量計算
 		calc_tropo(rcvn);//対流圏遅延量計算
-		
-		//C02衛星強制排除
-		Elevation[rcvn][72]=0;
 
 		Glo_Num=0;Gps_Num=0;Gal_Num=0;Bei_Num=0;//各衛星システムの数を初期化
 		choose_sat(rcvn,iter);//衛星選択
@@ -68,31 +63,22 @@ int main(){
 				rover_kaisu++;
 			}
 
-			if(fabs(GPSTIME - DGPSTIME) < 0.1 && SATn[1]>=0 && DGPSTIME>=0.9 && DGPSTIME<=307000){//同じGPS時刻
-//			while(DGPSTIME-GPSTIME >= -0.005 && DGPSTIME-GPSTIME <= 0.995){//基準側が1Hz、移動側が5Hzなどのとき
-//				read_data(0);//whileのときだけ
+			//時刻判断処理部分
+//			if(fabs(GPSTIME - DGPSTIME) < 0.1 && SATn[1]>=0){//同じGPS時刻
+			while(DGPSTIME-GPSTIME >= -0.005 && DGPSTIME-GPSTIME <= 0.995){//基準側が1Hz、移動側が5Hzなどのとき
+				read_data(0);//whileのときだけ
+				int i;
 
 				rover_kaisu++;
 				Sol_flag[0]++;//移動側の全回数カウント
 
-				calc_satpos(0);//エフェメリスからの衛星位置計算
+				calc_satpos(0);///エフェメリスからの衛星位置計算
 				calc_direction(0,iter);//仰角・方位角計算（移動側なのでユーザ位置を基準）
 				calc_iono_model(rcvn);//電離層モデルでの電離層遅延量計算
 				calc_tropo(0);//対流圏遅延量の計算
-				
-				//C02衛星強制排除
-				Elevation[rcvn][72] = 0;
 
 				Glo_Num=0;Gps_Num=0;Gal_Num=0;Bei_Num=0;
-
-				fprintf(fp[7], "%f,%d", DGPSTIME, SATn[rcvn]);
-
 				choose_sat(0,iter);//衛星選択
-
-//				fprintf(fp[7], "%f,%d,%d,%d,%d,%d,%d\n",DGPSTIME, SATn[rcvn], Gps_Num, Glo_Num, Gal_Num, Bei_Num);
-
-				fprintf(fp[7], "\n");
-//				fprintf(fp[7], "%f,%d", DGPSTIME, SATn[rcvn]);
 
 				//移動側の単独測位を行う（GPS衛星が4機以上あることが前提）
 				POS=1;//単独測位
@@ -104,7 +90,7 @@ int main(){
 				}
 
 				//RTKを行う部分(GPS/QZS/GALILEOの場合)　あわせてDGNSSも行う
-				if(SATn[rcvn]>=6 && Bei_Num==0 && Glo_Num==0)
+				if(SATn[rcvn]>=5 && Bei_Num==0 && Glo_Num==0)
 					calc_rtk_GQE(rcvn);
 
 				//RTKを行う部分(GPS/QZS/GALILEO+BeiDouの場合)　あわせてDGNSSも行う
@@ -119,12 +105,10 @@ int main(){
 
 		}//DGNSS＋RTK
 
-		if(((int)iter%50)==0 && GPSTIME>=-0.1 && DGPSTIME>=-0.1)//途中経過の書き出し
+		if(((int)iter%500)==0 && GPSTIME>=-0.1 && DGPSTIME>=-0.1)//途中経過の書き出し
 			cout << GPSTIME << " " << SATn[1] << " " << SATn[0] << " " << Sol_flag[0] << " " << Sol_flag[1] << " " << Sol_flag[2] << endl;
 		
 	}//ここまでが繰り返し計算部
-
-	cout << GPSTIME << " " << SATn[1] << " " << SATn[0] << " " << Sol_flag[0] << " " << Sol_flag[1] << " " << Sol_flag[2] << endl;
 
 	file_close(RTK);//ファイルを閉じる
 	return(0);

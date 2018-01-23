@@ -12,7 +12,7 @@ extern FILE *fp[RCVN];
 
 extern int Rinex,prn;
 extern int SATn[RCVN],SVn[RCVN][PRN];//使用衛星数、使用衛星番号
-extern int SVn_sat[RCVN][PRN];
+extern int SVpos_flag[RCVN][PRN];
 extern int Iteration;
 extern int Sunday,End_flag,POS;
 extern int No_rtk,Max_prn;
@@ -66,19 +66,19 @@ typedef struct peph{
 extern peph_t Ephe;
 
 typedef struct nav{
-	int		gpsweek[PRN][128],iode[PRN][128],accuracy[PRN][128],prn[PRN][128],
-			health[PRN][128],code[PRN][128],pflag[PRN][128];
-	double	interval[PRN][128],gpstime[PRN][128],toc[PRN][128],af0[PRN][128],
-			af1[PRN][128],af2[PRN][128],crs[PRN][128],dn[PRN][128],
-			m0[PRN][128],cuc[PRN][128],e[PRN][128],cus[PRN][128],
-			roota[PRN][128],toe[PRN][128],cic[PRN][128],omega0[PRN][128],
-			cis[PRN][128],i0[PRN][128],crc[PRN][128],omega[PRN][128],
-			domega0[PRN][128],di0[PRN][128],tgd[PRN][128],iodc[PRN][128];	
+	int		gpsweek[PRN][256],iode[PRN][256],accuracy[PRN][256],prn[PRN][256],
+			health[PRN][256],code[PRN][256],pflag[PRN][256];
+	double	interval[PRN][256],gpstime[PRN][256],toc[PRN][256],af0[PRN][256],
+			af1[PRN][256],af2[PRN][256],crs[PRN][256],dn[PRN][256],
+			m0[PRN][256],cuc[PRN][256],e[PRN][256],cus[PRN][256],
+			roota[PRN][256],toe[PRN][256],cic[PRN][256],omega0[PRN][256],
+			cis[PRN][256],i0[PRN][256],crc[PRN][256],omega[PRN][256],
+			domega0[PRN][256],di0[PRN][256],tgd[PRN][256],iodc[PRN][256];	
 	//for GLONASS
-	double	TauN[PRN][128],GammaN[PRN][128],tk[PRN][128],
-			Xp[PRN][128],Xv[PRN][128],Xa[PRN][128],
-			Yp[PRN][128],Yv[PRN][128],Ya[PRN][128],
-			Zp[PRN][128],Zv[PRN][128],Za[PRN][128];
+	double	TauN[PRN][256],GammaN[PRN][256],tk[PRN][256],
+			Xp[PRN][256],Xv[PRN][256],Xa[PRN][256],
+			Yp[PRN][256],Yv[PRN][256],Ya[PRN][256],
+			Zp[PRN][256],Zv[PRN][256],Za[PRN][256];
 
 }nav_t;
 extern nav_t Sub_E;

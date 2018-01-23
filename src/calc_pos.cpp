@@ -80,7 +80,8 @@ void calc_pos(int rcvn, int iter_main, int pos)
 				Cp1[1][j] = Cp1ref[j] - cs*(DGPSTIME-GPSTIME)*(Ephe.af1[j]*F1/cs);
 			if(j>=71 && j<=100)
 				Cp1[1][j] = Cp1ref[j] - cs*(DGPSTIME-GPSTIME)*(Ephe.af1[j]*B1/cs);
-			//GLONASS‚Í‚Ç‚¤‚·‚é‚©H 2017/6/27
+			if(j>=101 && j<=135)
+				Cp1[1][j] = Cp1ref[j] - cs*(DGPSTIME-GPSTIME)*(Ephe.GammaN[j]*GF1[j]/cs);
 
 		}
 

@@ -16,8 +16,8 @@ void w_inv(double w1[PRN*PRN], int satn, int flag, int nsvg, int nsvb)
 {
 	int i,j,l,m,n,o;
 	double eps;
-	double std1 = Carrier_noise;//gps qzs
-	double std2 = Code_noise;//gps qzs
+	double std1 = Carrier_noise;//Å‰‚Éİ’èÏ‚İ‚Ì”À‘—”gˆÊ‘Š‚ÌG‰¹
+	double std2 = Code_noise;//Å‰‚Éİ’èÏ‚İ‚Ì‹[—‹——£‚ÌG‰¹
 
 	eps=1.0e-25;
 

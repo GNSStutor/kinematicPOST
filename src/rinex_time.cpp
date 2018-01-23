@@ -1,6 +1,5 @@
 //////////////////////////////////////////////////
 //
-//	NAVFILE と OBSFILE の時刻を比較する
 //　エフェメリスを使用するタイミングを決定
 //
 //////////////////////////////////////////////////
@@ -132,20 +131,21 @@ void rinex_time(int rcvn)
 
 	}
 	for(i=101;i<=130;i++){//GLONASS
-			Ephe.TauN[i] = Sub_E.TauN[i][0];
-			Ephe.GammaN[i] = Sub_E.GammaN[i][0];
-			Ephe.tk[i] = Sub_E.tk[i][0];
-			Ephe.Xp[i] = Sub_E.Xp[i][0];
-			Ephe.Xv[i] = Sub_E.Xv[i][0];
-			Ephe.Xa[i] = Sub_E.Xa[i][0];
-			Ephe.Yp[i] = Sub_E.Yp[i][0];
-			Ephe.Yv[i] = Sub_E.Yv[i][0];
-			Ephe.Ya[i] = Sub_E.Ya[i][0];
-			Ephe.Zp[i] = Sub_E.Zp[i][0];
-			Ephe.Zv[i] = Sub_E.Zv[i][0];
-			Ephe.Za[i] = Sub_E.Za[i][0];
-			Ephe.toc[i] = Sub_E.toc[i][0];
-			Ephe.roota[i]=1.0;
+		Ephe.TauN[i] = Sub_E.TauN[i][0];
+		Ephe.GammaN[i] = Sub_E.GammaN[i][0];
+		Ephe.tk[i] = Sub_E.tk[i][0];
+		Ephe.Xp[i] = Sub_E.Xp[i][0];
+		Ephe.Xv[i] = Sub_E.Xv[i][0];
+		Ephe.Xa[i] = Sub_E.Xa[i][0];
+		Ephe.Yp[i] = Sub_E.Yp[i][0];
+		Ephe.Yv[i] = Sub_E.Yv[i][0];
+		Ephe.Ya[i] = Sub_E.Ya[i][0];
+		Ephe.Zp[i] = Sub_E.Zp[i][0];
+		Ephe.Zv[i] = Sub_E.Zv[i][0];
+		Ephe.Za[i] = Sub_E.Za[i][0];
+		Ephe.toc[i] = Sub_E.toc[i][0];
+		Ephe.roota[i]=1.0;
+		r_time_count=1;
 	}
 	
 	

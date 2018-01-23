@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////
 //
 // 全ての衛星の位置を計算する（衛星時計の補正も実施）
-// GPS/QZS/GALILEO/BeiDouはほの同じ　GLONASSは別
+// GPS/QZS/GALILEO/BeiDouはほぼ同じ　GLONASSは別
 //
 //////////////////////////////////////////////////////////////
 #include <stdio.h>
@@ -45,14 +45,14 @@ void calc_satpos(int rcvn)
 
 	j = 0;
 	for(i=1;i<=PRN-1;i++)
-		SVn_sat[rcvn][i]=0;
+		SVpos_flag[rcvn][i]=0;
 
 	for(i=0;i<SATn[rcvn];i++){ 
 		prn = SVn[rcvn][i];//
 
 		if(prn==0)
 			continue;
-		if(prn<100){
+		if(prn<=100){
 			if(prn>=71)
 				system_offset = -14.0;
 			else if(prn>=41 && prn<=70)
@@ -97,12 +97,13 @@ void calc_satpos(int rcvn)
 			e[prn]     = Ephe.e[prn];
 
 			//エフェメリスのヘルス情報より利用可否判断
-			if(Ephe.roota[prn]<=0.1 && Ephe.roota[prn]>=-0.1 || Ephe.health[prn]>0){
+			//ついでにエフェメリスが存在するかどうかを軌道半径でチェック
+			if(Ephe.roota[prn]<=0.1 && Ephe.roota[prn]>=-0.1 || Ephe.health[prn]>0.1){
 //				fprintf(fp[8],"No Ephemeris   PRN=%d   time=%7.1f\n",prn,GPSTIME);
 				j = 0;
 			}
 			else
-				SVn_sat[rcvn][prn]=1;
+				SVpos_flag[rcvn][prn]=1;
 
 			ek[prn]    = newton(mk[prn],e[prn],prn);
 
@@ -187,7 +188,7 @@ void calc_satpos(int rcvn)
 				SV_corrtime[rcvn][prn]=range[prn] - Pr1[rcvn][prn];
 //			}
 
-		}//prn<100
+		}//prn<=100
 		else {
 			int TSTEP = 180; //step幅
 			int i;
@@ -233,7 +234,7 @@ void calc_satpos(int rcvn)
 			y0[7] = Ephe.Ya[prn];
 			y0[8] = Ephe.Za[prn];
 			
-			if(Ephe.roota[prn]<0.1)
+			if(Ephe.roota[prn]<0.1)//エフェメリスのない衛星は計算しない
 				tkmin=0;
 
 			while((fabs(tkmin))>=TSTEP){
@@ -265,10 +266,10 @@ void calc_satpos(int rcvn)
 
 				
 			//衛星位置計算ができたかどうか
-			if( G_tkmin[prn]>7200||SVx[rcvn][prn]>10000000000000000 || Ephe.health[prn]>0||Ephe.roota[prn]<=0.1)
-				SVn_sat[rcvn][prn]=0;
+			if( G_tkmin[prn]>7200 || SVx[rcvn][prn]>10000000000000000 || Ephe.health[prn]>0.1 || Ephe.roota[prn]<=0.1)
+				SVpos_flag[rcvn][prn]=0;
 			else
-				SVn_sat[rcvn][prn]=1;
+				SVpos_flag[rcvn][prn]=1;
 		}
 		//GLONASS
 ///////////////////////////////////////////////////////////

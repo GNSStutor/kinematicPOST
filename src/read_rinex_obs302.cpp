@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//　observation
+//　観測データの読み込み
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +37,8 @@ void read_rinex_obs302(int rcvn)
 	double second;
 	static int forward[2]={1,1};
 	char a,buff[512],buff2[512];
+	double kawari;
+	int netr9_satn=0;
 
 	for(j=0;j<=PRN-1;j++){
 		Cp1[rcvn][j]=0;
@@ -45,12 +47,22 @@ void read_rinex_obs302(int rcvn)
 		Cn1[rcvn][j]=0;
 	}
 
-	//1:UBLOX 8T RINEX300
-		if(rcvn==1)
-			flag=26;
-		else
-			flag=26;
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+	//読み込みRINEX情報(まずRTKLIBのRTKCONV2.4.2でUBLOXのUBXファイルを変換)
 
+	//RINEX versionは3.02
+	//必要なSatellite Systemsをチェック
+	//Observation Typesは全てチェック(C,L,D,S)
+	//FrequenciesはL1のみ！
+
+	//以上で、以下のflag=1で読み込む
+		if(rcvn==1)
+			flag=1;//上記で変換したタイプのRINEX
+		else
+			flag=1;//上記で変換したタイプのRINEX
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 	while(read_finish_flag != 1){
 		if(forward[rcvn]==1){//前置きの部分（end of headerまで）
@@ -121,7 +133,7 @@ void read_rinex_obs302(int rcvn)
 			}
 
 
-			if(flag==26 && amount>=35){//UBLOX M8 rinex3.02
+			if(flag==1 && amount>=35){//UBLOX M8 rinex3.02
 
 				//実際の擬似距離や搬送波の読み込み
 				while(return_flag != satn){
@@ -211,7 +223,317 @@ void read_rinex_obs302(int rcvn)
 
 				read_finish_flag=1;
 				SATn[rcvn]=satn;
-			}//flag==26
+			}//flag==1
+
+			if(flag==22 && amount>=35){//
+
+//R   16 C1C C1P C2C C2P D1C D1P D2C D2P L1C L1P L2C L2P S1C  SYS / # / OBS TYPES 
+//       S1P S2C S2P                                          SYS / # / OBS TYPES 
+//G   16 C1C C2W C2X C5X D1C D2W D2X D5X L1C L2W L2X L5X S1C  SYS / # / OBS TYPES 
+//       S2W S2X S5X                                          SYS / # / OBS TYPES 
+//J   20 C1  C1C C2X C5X C6X D1  D1C D2X D5X D6X L1  L1C L2X  SYS / # / OBS TYPES 
+//       L5X L6X S1  S1C S2X S5X S6X                          SYS / # / OBS TYPES 
+//C   12 C2I C6I C7I D2I D6I D7I L2I L6I L7I S2I S6I S7I      SYS / # / OBS TYPES 
+
+				//実際の擬似距離や搬送波の読み込み
+				while(return_flag != satn){
+					i=0;
+
+					a = fgetc(fp[rcvn]);//G R E S J C
+					if(a == 'G' || a == 'R' || a=='E' || a=='J' || a=='W' || a=='S' || a=='C'){
+						if(a=='G')
+							type_sat=0;
+						else if(a=='R')
+							type_sat=1;
+						else if(a=='E')
+							type_sat=2;
+						else if(a=='J')
+							type_sat=3;
+						else if(a=='W')
+							type_sat=4;
+						else if(a=='S')
+							type_sat=5;
+						else if(a=='C')
+							type_sat=6;
+						else
+							cout << "error in read_rinex_obs" << endl;
+					}
+
+					i=0;
+					a = fgetc(fp[rcvn]);buff[i++]=a;
+					a = fgetc(fp[rcvn]);buff[i++]=a;buff[2]='\0';
+					sv_number = atoi(buff);
+
+					i=0;
+					while(a != '\n'){
+						a = fgetc(fp[rcvn]);
+						buff[i++]=a;
+					}
+					return_flag++;
+
+					//GPS
+					if(type_sat==0){
+						sv_offset = 0;
+						SVn[rcvn][netr9_satn]=sv_number+sv_offset;
+						netr9_satn++;
+
+						for(i=0;i<=15;i++)//CODE
+							buff2[i]=buff[i];
+						buff2[15]='\0';
+						Pr1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16;i<=16+15;i++)
+							buff2[i-16]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*2;i<=16*2+15;i++)
+							buff2[i-16*2]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*3;i<=16*3+15;i++)
+							buff2[i-16*3]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*4;i<=16*4+15;i++)//DOPPLER
+							buff2[i-16*4]=buff[i];
+						buff2[15]='\0';
+						Dp1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*5;i<=16*5+15;i++)
+							buff2[i-16*5]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*6;i<=16*6+15;i++)
+							buff2[i-16*6]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*7;i<=16*7+15;i++)
+							buff2[i-16*7]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*8;i<=16*8+15;i++)//CARRIER
+							buff2[i-16*8]=buff[i];
+						buff2[15]='\0';
+						Cp1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*9;i<=16*9+15;i++)
+							buff2[i-16*9]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*10;i<=16*10+15;i++)
+							buff2[i-16*10]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*11;i<=16*11+15;i++)
+							buff2[i-16*11]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*12;i<=16*12+15;i++)//SN
+							buff2[i-16*12]=buff[i];
+						buff2[15]='\0';
+						Cn1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*131;i<=16*13+15;i++)
+							buff2[i-16*13]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*14;i<=16*14+15;i++)
+							buff2[i-16*14]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*15;i<=16*15+15;i++)
+							buff2[i-16*15]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+					}
+
+
+//					/*
+					//QZS    24
+					if(type_sat==3){
+
+						sv_offset = 32;
+
+						SVn[rcvn][netr9_satn]=sv_number+sv_offset;
+						netr9_satn++;
+
+
+						for(i=0;i<=15;i++)//CODE
+							buff2[i]=buff[i];
+						buff2[15]='\0';
+						Pr1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16;i<=16+15;i++)
+							buff2[i-16]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*2;i<=16*2+15;i++)
+							buff2[i-16*2]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*3;i<=16*3+15;i++)
+							buff2[i-16*3]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*4;i<=16*4+15;i++)
+							buff2[i-16*4]=buff[i];
+						buff2[15]='\0';
+	//					[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*6;i<=16*6+15;i++)//DOPPLER
+							buff2[i-16*6]=buff[i];
+						buff2[15]='\0';
+						Dp1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*7;i<=16*7+15;i++)
+							buff2[i-16*7]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*8;i<=16*8+15;i++)
+							buff2[i-16*8]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*9;i<=16*9+15;i++)
+							buff2[i-16*9]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*10;i<=16*10+15;i++)
+							buff2[i-16*10]=buff[i];
+						buff2[15]='\0';
+//						Cp5[rcvn][sv_number]=atof(buff2);
+
+						for(i=16*12;i<=16*12+15;i++)//CARRIER
+							buff2[i-16*12]=buff[i];
+						buff2[15]='\0';
+						Cp1[rcvn][sv_number+sv_offset]=atof(buff2);
+						for(i=16*13;i<=16*13+15;i++)//CARRIER
+							buff2[i-16*13]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*14;i<=16*14+15;i++)//CARRIER
+							buff2[i-16*14]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*15;i<=16*15+15;i++)//CARRIER
+							buff2[i-16*15]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*16;i<=16*16+15;i++)//CARRIER
+							buff2[i-16*16]=buff[i];
+						buff2[15]='\0';
+//						Cp1[rcvn][sv_number]=atof(buff2);
+
+						for(i=16*18;i<=16*18+15;i++)//SN
+							buff2[i-16*18]=buff[i];
+						buff2[15]='\0';
+						Cn1[rcvn][sv_number+sv_offset]=atof(buff2);
+						for(i=16*19;i<=16*19+15;i++)//SN
+							buff2[i-16*19]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*20;i<=16*20+15;i++)//SN
+							buff2[i-16*20]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*21;i<=16*21+15;i++)//SN
+							buff2[i-16*21]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*22;i<=16*22+15;i++)//SN
+							buff2[i-16*22]=buff[i];
+						buff2[15]='\0';
+//						Cn1[rcvn][sv_number]=atof(buff2);
+
+					}
+//					*/
+//					/*
+					//BEIDOU no B3 data
+					if(type_sat==6){
+
+						sv_offset = 70;
+						SVn[rcvn][netr9_satn]=sv_number+sv_offset;
+						netr9_satn++;
+
+						for(i=0;i<=15;i++)//CODE
+							buff2[i]=buff[i];
+						buff2[15]='\0';
+						Pr1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16;i<=16+15;i++)
+							buff2[i-16]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*2;i<=16*2+15;i++)
+							buff2[i-16*2]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*3;i<=16*3+15;i++)//DOPPLER
+							buff2[i-16*3]=buff[i];
+						buff2[15]='\0';
+						Dp1[rcvn][sv_number+sv_offset]=atof(buff2);
+
+						for(i=16*4;i<=16*4+15;i++)
+							buff2[i-16*4]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*5;i<=16*5+15;i++)
+							buff2[i-16*5]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*6;i<=16*6+15;i++)//CARRIER
+							buff2[i-16*6]=buff[i];
+						buff2[15]='\0';
+						Cp1[rcvn][sv_number+sv_offset]=atof(buff2);
+						for(i=16*7;i<=16*7+15;i++)
+							buff2[i-16*7]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*8;i<=16*8+15;i++)
+							buff2[i-16*8]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+
+						for(i=16*9;i<=16*9+15;i++)//SN
+							buff2[i-16*9]=buff[i];
+						buff2[15]='\0';
+						Cn1[rcvn][sv_number+sv_offset]=atof(buff2);
+						for(i=16*10;i<=16*10+15;i++)
+							buff2[i-16*10]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+						for(i=16*11;i<=16*11+15;i++)
+							buff2[i-16*11]=buff[i];
+						buff2[15]='\0';
+						kawari=atof(buff2);
+					}
+//					*/
+
+				}//while
+
+				read_finish_flag=1;
+				SATn[rcvn]=netr9_satn;
+			}//flag==22
 
 		}//else
 	}//while

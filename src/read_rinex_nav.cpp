@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-//	read navigation file
+//　航法メッセージの読み込み
 //
 //////////////////////////////////////////////////////////////////////////////
 #include<stdio.h>
@@ -74,15 +74,15 @@ void read_rinex_nav(int rcvn)
 
 				if(return_flag==1){//read line1
 					b = buff[0];//type of sat
-					if(b=='G'){//GPS     0
+					if(b=='G'){//GPS 0
 						num=0;offset=0;type=0;}
 					if(b=='R'){//GLONASS 1
 						num=4;offset=100;type=1;}
 					if(b=='E'){//GALILEO 2
 						num=1;offset=40;type=2;}
-					if(b=='J'){//QZS     3
+					if(b=='J'){//QZS 3
 						num=2;offset=32;type=3;}
-					if(b=='C'){//BEIDOU  4
+					if(b=='C'){//BEIDOU 4
 						num=3;offset=70;type=4;}
 				}
 
@@ -435,6 +435,7 @@ void read_rinex_nav(int rcvn)
 							i=0;
 					}//GALILEO
 				}
+
 				if(type==1){//Glonass
 					if(return_flag==1){
 						for(i=1;i<=2;i++)//sv number
@@ -488,58 +489,55 @@ void read_rinex_nav(int rcvn)
 							buff2[i-5] = buff[i];
 						buff2[18] = '\0';Sub_E.Xp[sv][t_number]=atof(buff2)*1000;
 
-						for(i=24;i<=41;i++)//x
+						for(i=24;i<=41;i++)//X dot
 							buff2[i-24] = buff[i];
 						buff2[18] = '\0';Sub_E.Xv[sv][t_number] = atof(buff2)*1000;
 
-						for(i=43;i<=60;i++)//x
+						for(i=43;i<=60;i++)//X accel
 							buff2[i-43] = buff[i];
 						buff2[18] = '\0';Sub_E.Xa[sv][t_number] = atof(buff2)*1000;
 
 						for(i=62;i<=79;i++)//health
 							buff2[i-62] = buff[i];
-						buff2[18] = '\0';kawari = atof(buff2);i=0;
+						buff2[18] = '\0';Sub_E.health[sv][t_number] = atoi(buff2);
+						i=0;
 					}if(return_flag==3){//read line3
-						for(i=5;i<=22;i++)//y
+						for(i=5;i<=22;i++)//Y
 							buff2[i-5] = buff[i];
 						buff2[18] = '\0';Sub_E.Yp[sv][t_number]=atof(buff2)*1000;
 
-						for(i=24;i<=41;i++)//crs
+						for(i=24;i<=41;i++)//Y dot
 							buff2[i-24] = buff[i];
 						buff2[18] = '\0';Sub_E.Yv[sv][t_number] = atof(buff2)*1000;
 
-						for(i=43;i<=60;i++)//dn
+						for(i=43;i<=60;i++)//Y accel
 							buff2[i-43] = buff[i];
 						buff2[18] = '\0';Sub_E.Ya[sv][t_number] = atof(buff2)*1000;
 
-						for(i=62;i<=79;i++)//m0
+						for(i=62;i<=79;i++)//frequency number
 							buff2[i-62] = buff[i];
 						buff2[18] = '\0';kawari = atof(buff2);
 
 						GF1[sv]=f1+kawari*df1;
-//						GF2[sv]=f2+kawari*df2;i=0;
+						i=0;
 
 					}if(return_flag==4){//read line4
-						for(i=5;i<=22;i++)//y
+						for(i=5;i<=22;i++)//Z
 							buff2[i-5] = buff[i];
 						buff2[18] = '\0';Sub_E.Zp[sv][t_number]=atof(buff2)*1000;
 
-						for(i=24;i<=41;i++)//crs
+						for(i=24;i<=41;i++)//Z dot
 							buff2[i-24] = buff[i];
 						buff2[18] = '\0';Sub_E.Zv[sv][t_number] = atof(buff2)*1000;
 
-						for(i=43;i<=60;i++)//dn
+						for(i=43;i<=60;i++)//Z accel
 							buff2[i-43] = buff[i];
 						buff2[18] = '\0';Sub_E.Za[sv][t_number] = atof(buff2)*1000;
 
-
-						for(i=62;i<=79;i++)//health
+						for(i=62;i<=79;i++)//Age of oper. information  (days) 
 							buff2[i-62] = buff[i];
-						buff2[18] = '\0';Sub_E.health[sv][t_number] = atoi(buff2);i=0;
-
-//						for(i=62;i<=79;i++)//Age of oper. information  (days) 
-//							buff2[i-62] = buff[i];
-//						buff2[18] = '\0';kawari = atof(buff2);
+						buff2[18] = '\0';kawari = atof(buff2);
+						i=0;
 					
 						dotw = dayofweek(2000+year,month,day);
 						Sunday = dotw;
@@ -556,7 +554,7 @@ void read_rinex_nav(int rcvn)
 					//	sub_gpstime[sv][t_number] = check[sv];
 						i=0;
 					}//line4
-					}//glonass
+				}//glonass
 			}//while
 			return_flag = 0;
 		}
