@@ -707,7 +707,7 @@ extern void eph2pos(gtime_t t, const eph_t *eph, double pr, double *rs,
 * notes  : rs[(0:2)+i*3],dts[i] = obs[i] satellite position/clock-bias
 *          if no navigation messages, set 0.0 to rs[], dts[]
 *-----------------------------------------------------------------------------*/
-extern void satpos(const obsd_t *obs, int n, const nav_t *nav, double *rs,
+extern void satpos(const obsd_t *obs, int n, const nav_b *nav, double *rs,
                    double *dts)
 {
     int i,j,k;

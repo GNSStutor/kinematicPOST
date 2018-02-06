@@ -94,6 +94,7 @@ void read_rinex_obs302(int rcvn)
 				cout << "rover file finish" << endl;
 				read_finish_flag = 1;
 				End_flag = 1;
+				getchar();				//////test
 				exit(1);
 			}
 

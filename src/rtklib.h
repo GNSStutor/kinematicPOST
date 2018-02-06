@@ -73,7 +73,7 @@ typedef struct {        /* navigation messages */
     eph_t *eph;         /* satellite ephemeris and clock parameters */
     double ion[8];      /* iono model parameters {a0,a1,a2,a3,b0,b1,b2,b3} */
     double utc[4];      /* delta-utc parameters */
-} nav_t;
+} nav_b;
 
 typedef struct {        /* positioning solution */
     double rr[3];       /* estimated receiver position (ecef) (m) */
@@ -82,7 +82,7 @@ typedef struct {        /* positioning solution */
 } sol_t;
 
 /* callback function types */
-typedef int (* infunc_t)(obsd_t **, nav_t **);
+typedef int (* infunc_t)(obsd_t **, nav_b **);
 typedef void (* outfunc_t)(gtime_t, sol_t, sol_t, int, int);
 
 /* matrix and vector functions -----------------------------------------------*/
@@ -124,7 +124,7 @@ extern void covenu(const double *pos, const double *P, double *Q);
 extern double geoidh(const double *pos);
 
 /* input/output functions ----------------------------------------------------*/
-extern int readrnx(char **files, int n, obs_t *obs, nav_t *nav);
+extern int readrnx(char **files, int n, obs_t *obs, nav_b *nav);
 
 /* integer least-square estimation -------------------------------------------*/
 extern int lambda(int n, int m, const double *a, const double *Q, double *F,
@@ -133,7 +133,7 @@ extern int lambda(int n, int m, const double *a, const double *Q, double *F,
 /* navigation functions ------------------------------------------------------*/
 extern void eph2pos(gtime_t t, const eph_t *eph, double pr, double *rs,
                     double *dts);
-extern void satpos(const obsd_t *obs, int n, const nav_t *nav, double *rs,
+extern void satpos(const obsd_t *obs, int n, const nav_b *nav, double *rs,
                    double *dts);
 extern void satazel(const double *pos, const double *e, double *azel);
 extern double geodist(const double *rs, const double *rr, double *e);

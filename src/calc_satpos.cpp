@@ -45,7 +45,7 @@ void calc_satpos(int rcvn)
 
 	j = 0;
 	for(i=1;i<=PRN-1;i++)
-		SVpos_flag[rcvn][i]=0;
+		SVn_sat[rcvn][i]=0;
 
 	for(i=0;i<SATn[rcvn];i++){ 
 		prn = SVn[rcvn][i];//
@@ -103,7 +103,7 @@ void calc_satpos(int rcvn)
 				j = 0;
 			}
 			else
-				SVpos_flag[rcvn][prn]=1;
+				SVn_sat[rcvn][prn]=1;
 
 			ek[prn]    = newton(mk[prn],e[prn],prn);
 
@@ -267,9 +267,9 @@ void calc_satpos(int rcvn)
 				
 			//‰q¯ˆÊ’uŒvŽZ‚ª‚Å‚«‚½‚©‚Ç‚¤‚©
 			if( G_tkmin[prn]>7200 || SVx[rcvn][prn]>10000000000000000 || Ephe.health[prn]>0.1 || Ephe.roota[prn]<=0.1)
-				SVpos_flag[rcvn][prn]=0;
+				SVn_sat[rcvn][prn]=0;
 			else
-				SVpos_flag[rcvn][prn]=1;
+				SVn_sat[rcvn][prn]=1;
 		}
 		//GLONASS
 ///////////////////////////////////////////////////////////

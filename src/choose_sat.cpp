@@ -20,7 +20,7 @@ void choose_sat(int rcvn, int iter)
 				fabs(Pr1[rcvn][prn]) <= 1.0 ||//擬似距離の有無
 				fabs(Cp1[rcvn][prn]) <= 1.0 ||//搬送波位相の有無
 				LLI[rcvn][prn] >= 1 ||//Loss of lock indicator(スリップやハーフサイクルチェック)
-				SVpos_flag[rcvn][prn] == 0 ||//エフェメリスの有無
+				SVn_sat[rcvn][prn] == 0 ||//エフェメリスの有無
 				Ephe.health[prn] > 0.9)//エフェメリスの健康フラグ
 				i=i;
 			else{
