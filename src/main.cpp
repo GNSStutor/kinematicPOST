@@ -110,7 +110,7 @@ int main(){
 
 		if (((int)iter % 1) == 0 && GPSTIME >= -0.1 && DGPSTIME >= -0.1)//“r’†Œo‰ß‚Ì‘‚«o‚µ
 	//		cout << GPSTIME << " " << SATn[1] << " " << SATn[0] << " " << Sol_flag[0] << " " << Sol_flag[1] << " " << Sol_flag[2] << endl;
-			printf("\r%10.4f     %3d    %3d    %10d    %10d   %10d", GPSTIME, SATn[1], SATn[0], Sol_flag[0], Sol_flag[1], Sol_flag[2]);
+			printf("%10.4f     %3d    %3d    %10d    %10d   %10d\n", GPSTIME, SATn[1], SATn[0], Sol_flag[0], Sol_flag[1], Sol_flag[2]);
 
 		
 	}//‚±‚±‚Ü‚Å‚ªŒJ‚è•Ô‚µŒvZ•”
