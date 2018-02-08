@@ -3,7 +3,7 @@
 // UBLOX(M8P,M8T)の受信機観測データを利用したRTKの演算
 // GPS/QZSS L1, GALILEO E1, BeiDou B1, GLONASS G1
 //
-//		ver.1.3
+//		ver.1.4
 //
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +28,10 @@ int main(){
 	set_initial_value();//初期設定＋ファイル設定
 //	cout << "GPSTIME" << " " << "Ref" << " " << "Rov" << " " << "全回数" << " " << "測位回数" << " " << "FIX回数" << endl;
 	printf("  GPSTIME    RefSAT RovSAT      ALLcount     POSTcount     FIXcount\n");
+
+	fprintf(fp[3], "GPSTIME,SATn,e,n,u,Latitude,Longitude,Height,HDOP,VDOP,MinSvNum,Clock_ext,Clock5,Clock6,Clock7,PRN,\n");
+	fprintf(fp[4], "GPSTIME,dLongitude,dLatitude,dHeight,Longitude,Latitude,Height,SATn,\n");
+	fprintf(fp[5], "GPSTIME,e,n,u,dLongitude,dLatitude,dHeight,Longitude,Latitude,Height,Ratio,SATn...,\n");
 
 	for(iter=1;iter<=Iteration;iter++){//設定回数分読み込む
 
