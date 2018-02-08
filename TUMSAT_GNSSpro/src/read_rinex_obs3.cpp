@@ -270,6 +270,7 @@ void read_rinex_obs3(int rcvn)
 			if(rcvn==0 && a==EOF){
 				cout << "rover file finish" << endl;
 				read_finish_flag = 1;
+				cout << "push Enter key." << endl; getchar();
 				exit(1);
 			}
 			if (ObsHead[rcvn].version==2) {

@@ -117,5 +117,8 @@ int main(){
 
 
 	file_close(RTK);//ƒtƒ@ƒCƒ‹‚ð•Â‚¶‚é
+	
+	printf("push Enter key.\n");
+	getchar();
 	return(0);
 }
