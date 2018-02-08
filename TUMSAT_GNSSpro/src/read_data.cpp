@@ -9,6 +9,7 @@
 #include "global_extern.h"
 
 void read_rinex_nav(int);
+void read_rinex_obs3(int);
 void read_rinex_obs302(int);
 void rinex_time(int);
 
@@ -21,7 +22,8 @@ void read_data(int rcvn)
 		nav_i = 1;
 	}
 	if(nav_i == 1){
-		read_rinex_obs302(rcvn);//観測データ読み込み　毎エポック
+		read_rinex_obs3(rcvn);//観測データ読み込み　毎エポック
+	//	read_rinex_obs302(rcvn);//観測データ読み込み　毎エポック
 		if(rcvn==1){
 			rinex_time(rcvn);//航法メッセージの使用タイミングをGPS時刻より決める
 		}
